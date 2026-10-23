@@ -26,7 +26,8 @@ import {
   Calendar,
   Compass,
   ArrowUpRight,
-  Check
+  Check,
+  Zap
 } from "lucide-react";
 
 const GOOGLE_SHEETS_WEBHOOK =
