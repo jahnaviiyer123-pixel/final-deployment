@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import "./App.css";
 import axios from "axios";
+import MonochromeRiderJourney from "./components/MonochromeRiderJourney";
 import {
   Bike,
   FileText,
@@ -36,12 +37,12 @@ const WHATSAPP_LINK = "https://wa.me/919985747111?text=Hi%20Learn%20%26%20Drive!
 
 const NAV_LINKS = [
   { label: "Home", href: "#home" },
-  { label: "Courses", href: "#courses" },
-  { label: "Curriculum", href: "#curriculum" },
+  { label: "10-Day Simulator", href: "#simulator" },
   { label: "Fee Calculator", href: "#calculator" },
   { label: "Reviews", href: "#reviews" },
   { label: "Location", href: "#location" }
 ];
+
 
 const LOCALITIES = [
   "Khajaguda",
@@ -386,22 +387,34 @@ function Hero({ onOpenEnroll }) {
 
             {/* Action Bar */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
-              <button
-                onClick={() => onOpenEnroll()}
+              <a
+                href="#simulator"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.querySelector("#simulator")?.scrollIntoView({ behavior: "smooth" });
+                }}
                 className="btn-press px-8 py-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-base flex items-center justify-center gap-2 shadow-xl shadow-amber-400/20"
               >
-                <span>Book Free Consultation</span>
+                <Zap size={18} className="fill-slate-950" />
+                <span>Launch 10-Day Simulator</span>
                 <ChevronRight size={18} />
+              </a>
+
+              <button
+                onClick={() => onOpenEnroll()}
+                className="btn-press px-6 py-4 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 text-white font-semibold text-base flex items-center justify-center gap-2"
+              >
+                <span>Book Free Consultation</span>
               </button>
 
               <a
                 href={WHATSAPP_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-press px-7 py-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-semibold text-base flex items-center justify-center gap-2.5"
+                className="btn-press p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-semibold text-base flex items-center justify-center gap-2"
+                title="Chat on WhatsApp"
               >
-                <MessageCircle size={19} className="text-emerald-400" />
-                <span>Chat on WhatsApp</span>
+                <MessageCircle size={20} className="text-emerald-400" />
               </a>
             </div>
 
@@ -1332,6 +1345,9 @@ export default function App() {
       <Navbar onOpenEnroll={handleOpenEnroll} />
       <main className="pb-16 md:pb-0">
         <Hero onOpenEnroll={handleOpenEnroll} />
+        <div id="simulator">
+          <MonochromeRiderJourney onEnrollDay={handleOpenEnroll} />
+        </div>
         <FeeCalculator onSelectPackage={handleOpenEnroll} />
         <Curriculum />
         <ReviewsSection />
