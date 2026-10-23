@@ -87,3 +87,4 @@ memory/test_credentials.md
 
 # Emergent / AI tools
 .emergent/
+.env*
