@@ -43,8 +43,39 @@ const NAV_LINKS = [
 ];
 
 
+const BRANCHES = [
+  {
+    id: "khajaguda",
+    name: "Learn & Drive – Branch 1",
+    subName: "Khajaguda (Opp. ASBL)",
+    tag: "Flagship Academy",
+    address: "Road, opp. ASBL, Janmabhoomi Colony, Chaitanya Enclave, Khajaguda, Makthakousarali, Telangana 500104",
+    landmark: "Opposite ASBL & Janmabhoomi Colony",
+    timings: "Monday to Saturday: 6:00 AM – 7:30 PM",
+    specialNote: "Sundays: Pre-booked RTO Mock Test sessions only",
+    areas: "Khajaguda, Manikonda, Gachibowli, Lanco Hills, Financial District, Hitec City",
+    mapQuery: "Janmabhoomi+Colony+Chaitanya+Enclave+Khajaguda+Hyderabad+Telangana+500104",
+    mapsUrl: "https://maps.app.goo.gl/UHqRmVcc8FJLZ7a58"
+  },
+  {
+    id: "attapur",
+    name: "Learn and Drive 2",
+    subName: "Attapur / Upperpally",
+    tag: "Branch 2",
+    address: "Indram swimming pool, Nalanda Nagar, Attapur, Upperpally, Hyderabad, Telangana 500048",
+    landmark: "Near Indram Swimming Pool, Nalanda Nagar",
+    timings: "Monday to Saturday: 6:00 AM – 7:30 PM",
+    specialNote: "Morning & Evening batches open now",
+    areas: "Attapur, Upperpally, Nalanda Nagar, Hyderguda, Mehdipatnam, Rajendranagar",
+    mapQuery: "Indram+swimming+pool+Nalanda+Nagar+attapur+Hyderabad+Upperpally+Telangana+500048",
+    mapsUrl: "https://www.google.com/maps/search/?api=1&query=Indram+swimming+pool+Nalanda+Nagar+attapur+Hyderabad+Upperpally+Telangana+500048"
+  }
+];
+
 const LOCALITIES = [
-  "Khajaguda",
+  "Khajaguda (Branch 1)",
+  "Attapur / Upperpally (Learn and Drive 2)",
+  "Nalanda Nagar",
   "Manikonda",
   "Gachibowli",
   "Kondapur",
@@ -243,7 +274,7 @@ function Navbar({ onOpenEnroll }) {
               Learn <span className="text-amber-400">&</span> Drive
             </div>
             <p className="text-[10px] font-medium tracking-wider text-zinc-400 mt-1 uppercase">
-              2-Wheeler Academy • Khajaguda
+              2-Wheeler Academy • Khajaguda & Attapur
             </p>
           </div>
         </a>
@@ -365,7 +396,7 @@ function Hero({ onOpenEnroll }) {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
               </span>
-              <span>Morning & Evening Batches Open in Khajaguda</span>
+              <span>Batches Open in Khajaguda & Attapur</span>
               <span className="text-zinc-500">•</span>
               <span className="text-amber-400 font-semibold">1-on-1 Certified Trainers</span>
             </div>
@@ -452,9 +483,9 @@ function Hero({ onOpenEnroll }) {
                       Dedicated Training Ground
                     </p>
                     <p className="text-sm font-bold text-white mt-0.5">
-                      Khajaguda • Manikonda Junction
+                      Khajaguda & Attapur Branches
                     </p>
-                    <p className="text-[11px] text-zinc-400">Opposite ASBL & Janmabhoomi Colony</p>
+                    <p className="text-[11px] text-zinc-400">2 Off-Road Training Compounds in Hyderabad</p>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-amber-400/20 border border-amber-400/30 flex items-center justify-center text-amber-300">
                     <Compass size={20} />
@@ -649,7 +680,7 @@ function EnrollmentSection({ selectedCourse, onResetCourse }) {
   const [form, setForm] = useState({
     name: "",
     phone: "",
-    location: "Khajaguda",
+    location: "Khajaguda (Branch 1)",
     course: selectedCourse || "Basic 2-Wheeler Riding",
     batch: "Morning (6 AM - 9 AM)",
     message: ""
@@ -932,67 +963,137 @@ function EnrollmentSection({ selectedCourse, onResetCourse }) {
 
 /* ─── COMPONENT: LOCATION & MAP ─── */
 function LocationSection() {
+  const [selectedBranch, setSelectedBranch] = useState("khajaguda");
+  const branch = BRANCHES.find((b) => b.id === selectedBranch) || BRANCHES[0];
+
   return (
     <section id="location" className="py-24 bg-[#0D0F17] border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <p className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-2">
+            Visit Our Academies
+          </p>
+          <h2 className="font-heading text-3xl sm:text-5xl font-bold text-white tracking-tight">
+            Our Training Locations in Hyderabad
+          </h2>
+          <p className="text-zinc-400 text-sm sm:text-base mt-3 leading-relaxed">
+            Choose the branch closest to you. Both academies feature dedicated off-road balance grounds, dual-control scooters, and certified 1-on-1 trainers.
+          </p>
+
+          {/* Interactive Branch Switcher Tabs */}
+          <div className="mt-8 inline-flex p-1.5 rounded-2xl bg-zinc-900 border border-white/10 max-w-full overflow-x-auto">
+            {BRANCHES.map((b) => {
+              const isActive = selectedBranch === b.id;
+              return (
+                <button
+                  key={b.id}
+                  type="button"
+                  onClick={() => setSelectedBranch(b.id)}
+                  className={`px-5 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2.5 whitespace-nowrap ${
+                    isActive
+                      ? "bg-amber-400 text-slate-950 shadow-lg shadow-amber-400/20"
+                      : "text-zinc-400 hover:text-white"
+                  }`}
+                >
+                  <MapPin size={16} />
+                  <span>{b.name}</span>
+                  <span
+                    className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-bold ${
+                      isActive
+                        ? "bg-slate-950/20 text-slate-950"
+                        : "bg-white/10 text-zinc-300"
+                    }`}
+                  >
+                    {b.subName}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch">
-          {/* Location Details */}
+          {/* Location Cards & Details */}
           <div className="lg:col-span-5 space-y-6 flex flex-col justify-between">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-2">
-                Visit Our Academy
-              </p>
-              <h2 className="font-heading text-3xl sm:text-4xl font-bold text-white tracking-tight">
-                Khajaguda Academy Location
-              </h2>
-              <p className="text-zinc-400 text-sm mt-3 leading-relaxed">
-                Conveniently located for residents across Khajaguda, Manikonda, Gachibowli, Lanco Hills, and the Financial District.
-              </p>
-            </div>
-
             <div className="space-y-4">
-              <div className="p-5 rounded-2xl bg-[#121522] border border-white/10 flex items-start gap-4">
-                <MapPin size={22} className="text-amber-400 flex-shrink-0 mt-1" />
-                <div>
-                  <p className="text-xs font-semibold text-zinc-400 uppercase">Academy Address</p>
-                  <p className="text-sm font-semibold text-white mt-1 leading-snug">
-                    Road, opp. ASBL, Janmabhoomi Colony, Chaitanya Enclave, Khajaguda, Makthakousarali, Telangana 500104
-                  </p>
-                </div>
-              </div>
+              {BRANCHES.map((b) => {
+                const isActive = b.id === selectedBranch;
+                return (
+                  <div
+                    key={b.id}
+                    onClick={() => setSelectedBranch(b.id)}
+                    className={`p-5 rounded-2xl border cursor-pointer transition-all ${
+                      isActive
+                        ? "bg-[#121522] border-amber-400/80 shadow-xl shadow-amber-400/10"
+                        : "bg-zinc-900/40 border-white/10 hover:border-white/20 hover:bg-zinc-900/70"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <MapPin
+                          size={20}
+                          className={isActive ? "text-amber-400" : "text-zinc-500"}
+                        />
+                        <h3 className="font-heading font-bold text-base text-white">
+                          {b.name}
+                        </h3>
+                      </div>
+                      <span
+                        className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${
+                          isActive
+                            ? "bg-amber-400/20 text-amber-300 border border-amber-400/30"
+                            : "bg-white/5 text-zinc-400"
+                        }`}
+                      >
+                        {b.tag}
+                      </span>
+                    </div>
 
-              <div className="p-5 rounded-2xl bg-[#121522] border border-white/10 flex items-start gap-4">
-                <Clock size={22} className="text-emerald-400 flex-shrink-0 mt-1" />
+                    <p className="text-sm text-zinc-300 font-medium mt-3 leading-snug">
+                      {b.address}
+                    </p>
+
+                    <div className="mt-3 pt-3 border-t border-white/5 flex flex-wrap items-center gap-y-1 gap-x-4 text-xs text-zinc-400">
+                      <span><strong>Landmark:</strong> {b.landmark}</span>
+                      <span><strong>Areas:</strong> {b.areas}</span>
+                    </div>
+                  </div>
+                );
+              })}
+
+              <div className="p-4 rounded-2xl bg-[#121522] border border-white/10 flex items-start gap-3.5">
+                <Clock size={20} className="text-emerald-400 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs font-semibold text-zinc-400 uppercase">Operating Timings</p>
-                  <p className="text-sm font-semibold text-white mt-1">
-                    Monday to Saturday: 6:00 AM – 7:30 PM
+                  <p className="text-sm font-semibold text-white mt-0.5">
+                    {branch.timings}
                   </p>
-                  <p className="text-xs text-zinc-400">Sundays: Pre-booked RTO Mock Test sessions only</p>
+                  <p className="text-xs text-zinc-400 mt-0.5">{branch.specialNote}</p>
                 </div>
               </div>
             </div>
 
             <a
-              href="https://maps.app.goo.gl/UHqRmVcc8FJLZ7a58"
+              href={branch.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-press w-full py-4 rounded-xl border border-amber-400/40 bg-amber-400/10 text-amber-300 font-bold text-sm flex items-center justify-center gap-2 text-center"
+              className="btn-press w-full py-4 rounded-xl border border-amber-400/40 bg-amber-400/10 text-amber-300 font-bold text-sm flex items-center justify-center gap-2 text-center mt-2"
             >
               <Navigation size={17} />
-              <span>Open in Google Maps for Directions</span>
+              <span>Get Directions to {branch.name}</span>
               <ArrowUpRight size={16} />
             </a>
           </div>
 
           {/* Embedded Google Map */}
-          <div className="lg:col-span-7 rounded-3xl overflow-hidden border border-white/15 bg-black/50 shadow-2xl min-h-[380px]">
+          <div className="lg:col-span-7 rounded-3xl overflow-hidden border border-white/15 bg-black/50 shadow-2xl min-h-[380px] relative">
             <iframe
-              title="Learn and Drive Location - Khajaguda Hyderabad"
-              src="https://maps.google.com/maps?q=Janmabhoomi+Colony+Chaitanya+Enclave+Khajaguda+Hyderabad+Telangana+500104&output=embed&z=16"
+              key={branch.id}
+              title={`Learn and Drive Location - ${branch.name}`}
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(branch.mapQuery)}&output=embed&z=15`}
               width="100%"
               height="100%"
-              style={{ border: 0, minHeight: "420px" }}
+              style={{ border: 0, minHeight: "440px" }}
               allowFullScreen=""
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
@@ -1038,11 +1139,18 @@ function Footer() {
           </div>
 
           <div className="md:col-span-4 space-y-3">
-            <p className="text-xs font-bold text-white uppercase tracking-wider">Admissions & Help</p>
+            <p className="text-xs font-bold text-white uppercase tracking-wider">Our Academy Locations</p>
             <p className="text-sm text-zinc-300 font-semibold">Direct Helpline: +91 9985747111</p>
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              Road, opp. ASBL, Janmabhoomi Colony, Chaitanya Enclave, Khajaguda, Telangana 500104
-            </p>
+            <div className="space-y-3 text-xs text-zinc-400 leading-relaxed">
+              <div>
+                <strong className="text-zinc-200 block text-xs">Branch 1 (Khajaguda):</strong>
+                Road, opp. ASBL, Janmabhoomi Colony, Chaitanya Enclave, Khajaguda, Telangana 500104
+              </div>
+              <div>
+                <strong className="text-zinc-200 block text-xs">Branch 2 (Attapur / Upperpally):</strong>
+                Learn and Drive 2, Indram swimming pool, Nalanda Nagar, Attapur, Upperpally, Hyderabad, Telangana 500048
+              </div>
+            </div>
           </div>
         </div>
 
