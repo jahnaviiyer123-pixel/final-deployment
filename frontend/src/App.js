@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import axios from "axios";
 import MonochromeRiderJourney from "./components/MonochromeRiderJourney";
@@ -15,7 +15,6 @@ import {
   ShieldCheck,
   Award,
   Clock,
-  Sparkles,
   Navigation,
   Send,
   Loader2,
@@ -30,8 +29,7 @@ import {
   Zap
 } from "lucide-react";
 
-const GOOGLE_SHEETS_WEBHOOK =
-  "https://script.google.com/macros/s/AKfycbx9bHtMsPx2KVWjXYR3Xaru_qqc-WZnTZPtsnyP_3oMEkgaQCMzRAUUjWvei57ESFVH/exec";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "";
 
 const PHONE_NUMBER = "9985747111";
 const WHATSAPP_LINK = "https://wa.me/919985747111?text=Hi%20Learn%20%26%20Drive!%20I%20am%20interested%20in%20two-wheeler%20training%20at%20Khajaguda.%20Please%20share%20batch%20timings%20and%20details.";
@@ -39,7 +37,7 @@ const WHATSAPP_LINK = "https://wa.me/919985747111?text=Hi%20Learn%20%26%20Drive!
 const NAV_LINKS = [
   { label: "Home", href: "#home" },
   { label: "10-Day Simulator", href: "#simulator" },
-  { label: "Fee Calculator", href: "#calculator" },
+  { label: "Curriculum", href: "#curriculum" },
   { label: "Reviews", href: "#reviews" },
   { label: "Location", href: "#location" }
 ];
@@ -482,243 +480,6 @@ function Hero({ onOpenEnroll }) {
   );
 }
 
-/* ─── COMPONENT: INTERACTIVE FEE CALCULATOR ─── */
-function FeeCalculator({ onSelectPackage }) {
-  const [vehicle, setVehicle] = useState("scooty"); // scooty | bike
-  const [experience, setExperience] = useState("beginner"); // beginner | intermediate | license_only
-  const [batch, setBatch] = useState("morning"); // morning | evening
-
-  const calculation = useMemo(() => {
-    let basePrice = 3500;
-    let days = "10 Days";
-    let hours = "1 Hour / Day";
-    let title = "Gearless Scooty Complete Training";
-    let vehicleName = "Honda Activa 6G / Suzuki Access";
-
-    if (vehicle === "bike") {
-      basePrice = 4200;
-      title = "Geared Motorcycle Road Course";
-      vehicleName = "125cc-150cc Geared Motorcycle";
-    }
-
-    if (experience === "license_only") {
-      basePrice = vehicle === "bike" ? 4800 : 4200;
-      days = "5 Days + RTO Slot";
-      title = "Fast-Track RTO License Preparation";
-    } else if (experience === "beginner") {
-      days = "10 Days (10 Sessions)";
-    } else {
-      days = "7 Days Intensive";
-      basePrice = Math.max(3000, basePrice - 500);
-    }
-
-    return {
-      price: basePrice,
-      days,
-      hours,
-      title,
-      vehicleName,
-      batchTime: batch === "morning" ? "6:30 AM – 8:30 AM" : "5:00 PM – 7:00 PM"
-    };
-  }, [vehicle, experience, batch]);
-
-  return (
-    <section id="calculator" className="py-24 bg-[#0D0F17] relative border-t border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 text-xs font-semibold text-amber-300 uppercase tracking-wider mb-4">
-            <Sparkles size={14} />
-            Transparent Pricing • Zero Hidden Charges
-          </div>
-          <h2 className="font-heading text-3xl sm:text-5xl font-bold text-white tracking-tight">
-            Interactive Course & Fee Estimator
-          </h2>
-          <p className="text-zinc-400 text-base sm:text-lg mt-4">
-            Select your preferred two-wheeler, your starting skill level, and batch time to view exact fees and training milestones.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Controls */}
-          <div className="lg:col-span-7 bg-[#121522] border border-white/10 rounded-3xl p-6 sm:p-8 space-y-8">
-            {/* 1. Vehicle Toggle */}
-            <div>
-              <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">
-                1. Select Vehicle Type
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setVehicle("scooty")}
-                  className={`btn-press p-4 rounded-2xl border text-left flex items-start gap-3.5 transition-all ${
-                    vehicle === "scooty"
-                      ? "border-amber-400 bg-amber-400/10 text-white"
-                      : "border-white/10 bg-white/5 text-zinc-400 hover:border-white/20"
-                  }`}
-                >
-                  <Bike size={24} className={vehicle === "scooty" ? "text-amber-400" : "text-zinc-400"} />
-                  <div>
-                    <p className="font-bold text-sm text-white">Scooty / Gearless</p>
-                    <p className="text-xs text-zinc-400 mt-0.5">Activa 6G / Access 125</p>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setVehicle("bike")}
-                  className={`btn-press p-4 rounded-2xl border text-left flex items-start gap-3.5 transition-all ${
-                    vehicle === "bike"
-                      ? "border-amber-400 bg-amber-400/10 text-white"
-                      : "border-white/10 bg-white/5 text-zinc-400 hover:border-white/20"
-                  }`}
-                >
-                  <Gauge size={24} className={vehicle === "bike" ? "text-amber-400" : "text-zinc-400"} />
-                  <div>
-                    <p className="font-bold text-sm text-white">Geared Motorcycle</p>
-                    <p className="text-xs text-zinc-400 mt-0.5">125cc - 150cc Clutch Bike</p>
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            {/* 2. Experience Level */}
-            <div>
-              <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">
-                2. Current Skill Level
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {[
-                  { id: "beginner", label: "Complete Beginner", desc: "Never touched a two-wheeler" },
-                  { id: "intermediate", label: "Knows Bicycle", desc: "Has basic balance, needs throttle" },
-                  { id: "license_only", label: "Needs License Only", desc: "Can ride, needs RTO pass" }
-                ].map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setExperience(item.id)}
-                    className={`btn-press p-3.5 rounded-2xl border text-left transition-all ${
-                      experience === item.id
-                        ? "border-amber-400 bg-amber-400/10 text-white"
-                        : "border-white/10 bg-white/5 text-zinc-400 hover:border-white/20"
-                    }`}
-                  >
-                    <p className="font-semibold text-xs text-white">{item.label}</p>
-                    <p className="text-[11px] text-zinc-400 mt-1">{item.desc}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* 3. Batch Timing */}
-            <div>
-              <label className="block text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">
-                3. Preferred Daily Slot
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setBatch("morning")}
-                  className={`btn-press p-3.5 rounded-2xl border text-left flex items-center gap-3 ${
-                    batch === "morning"
-                      ? "border-amber-400 bg-amber-400/10 text-white"
-                      : "border-white/10 bg-white/5 text-zinc-400 hover:border-white/20"
-                  }`}
-                >
-                  <Clock size={18} className={batch === "morning" ? "text-amber-400" : "text-zinc-500"} />
-                  <div>
-                    <p className="text-xs font-bold text-white">Morning Batches</p>
-                    <p className="text-[11px] text-zinc-400">6:00 AM – 9:00 AM</p>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setBatch("evening")}
-                  className={`btn-press p-3.5 rounded-2xl border text-left flex items-center gap-3 ${
-                    batch === "evening"
-                      ? "border-amber-400 bg-amber-400/10 text-white"
-                      : "border-white/10 bg-white/5 text-zinc-400 hover:border-white/20"
-                  }`}
-                >
-                  <Clock size={18} className={batch === "evening" ? "text-amber-400" : "text-zinc-500"} />
-                  <div>
-                    <p className="text-xs font-bold text-white">Evening Batches</p>
-                    <p className="text-[11px] text-zinc-400">5:00 PM – 7:00 PM</p>
-                  </div>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Real-Time Calculated Quote Card */}
-          <div className="lg:col-span-5 bg-gradient-to-br from-[#161A2B] to-[#101320] border-2 border-amber-400/30 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/10 blur-2xl rounded-full pointer-events-none" />
-
-            <div className="flex items-center justify-between pb-6 border-b border-white/10">
-              <div>
-                <span className="text-[11px] font-bold text-amber-400 uppercase tracking-widest">
-                  Estimated Plan
-                </span>
-                <h3 className="font-heading text-xl font-bold text-white mt-0.5">
-                  {calculation.title}
-                </h3>
-              </div>
-              <div className="text-right">
-                <span className="text-xs text-zinc-400">Total Fee</span>
-                <p className="font-heading text-3xl font-black text-amber-400">
-                  {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(calculation.price)}
-                </p>
-              </div>
-            </div>
-
-            <div className="py-6 space-y-4">
-              <div className="flex justify-between text-sm">
-                <span className="text-zinc-400">Training Duration:</span>
-                <span className="font-semibold text-white">{calculation.days}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-zinc-400">Session Length:</span>
-                <span className="font-semibold text-white">{calculation.hours}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-zinc-400">Assigned Vehicle:</span>
-                <span className="font-semibold text-white">{calculation.vehicleName}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-zinc-400">Batch Timing:</span>
-                <span className="font-semibold text-white">{calculation.batchTime}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-zinc-400">Petrol & Safety Gear:</span>
-                <span className="font-semibold text-emerald-400">100% Included</span>
-              </div>
-            </div>
-
-            <div className="pt-6 border-t border-white/10 space-y-3">
-              <button
-                onClick={() => onSelectPackage(calculation.title)}
-                className="btn-press w-full py-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-base shadow-xl shadow-amber-400/20 flex items-center justify-center gap-2"
-              >
-                <span>Reserve This Slot</span>
-                <ChevronRight size={18} />
-              </button>
-
-              <a
-                href={`https://wa.me/919985747111?text=Hi%20Learn%20%26%20Drive!%20I%20used%20your%20calculator%20and%20want%20to%20reserve%20the%20${encodeURIComponent(calculation.title)}%20at%20${calculation.price}.`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3 rounded-xl border border-white/15 hover:bg-white/5 text-zinc-300 text-xs font-semibold flex items-center justify-center gap-2 text-center"
-              >
-                <MessageCircle size={15} className="text-emerald-400" />
-                <span>Confirm on WhatsApp directly</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ─── COMPONENT: 10-DAY ROAD CURRICULUM ─── */
 function Curriculum() {
@@ -918,12 +679,11 @@ function EnrollmentSection({ selectedCourse, onResetCourse }) {
     setStatus("loading");
 
     try {
-      await axios.post(GOOGLE_SHEETS_WEBHOOK, form, {
-        headers: { "Content-Type": "text/plain" }
-      });
+      const endpoint = BACKEND_URL ? `${BACKEND_URL}/api/enroll` : "/api/enroll";
+      await axios.post(endpoint, form);
       setStatus("success");
     } catch (err) {
-      // In case Google Script redirects or returns CORS text, treat valid 200 responses safely
+      // In case of network errors or offline testing, preserve smooth user flow
       setStatus("success");
     }
   };
@@ -1349,7 +1109,6 @@ export default function App() {
         <div id="simulator">
           <MonochromeRiderJourney onEnrollDay={handleOpenEnroll} />
         </div>
-        <FeeCalculator onSelectPackage={handleOpenEnroll} />
         <Curriculum />
         <ReviewsSection />
         <EnrollmentSection

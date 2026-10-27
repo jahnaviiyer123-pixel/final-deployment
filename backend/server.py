@@ -4,7 +4,6 @@ from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
-import httpx
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
@@ -97,19 +96,6 @@ async def enroll(data: EnrollmentCreate):
     enrollment = Enrollment(**data.model_dump())
     doc = enrollment.model_dump()
     await db.enrollments.insert_one(doc)
-
-    # Send to Google Sheets webhook if configured
-    webhook_url = os.environ.get("GOOGLE_SHEETS_WEBHOOK_URL", "")
-    if webhook_url:
-        try:
-            # Use clean payload (without MongoDB _id)
-            payload = {k: v for k, v in doc.items() if k != "_id"}
-            async with httpx.AsyncClient(timeout=10.0) as client_http:
-                await client_http.post(webhook_url, json=payload)
-                logger.info("Google Sheets webhook sent successfully")
-        except Exception as e:
-            logger.warning(f"Google Sheets webhook failed: {e}")
-
     return {"success": True, "message": "Enrollment submitted successfully!"}
 
 @api_router.get("/enrollments")
